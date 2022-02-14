@@ -72,4 +72,56 @@ describe("All Endpoints", () => {
       });
     });
   });
+  describe("PATCH", () => {
+    test(`Request body accepts:
+    an object in the form { inc_votes: newVote }
+    newVote will indicate how much the votes property
+    in the database should be updated by.
+    Responds with:
+    the updated article`, () => {
+      const dummyData = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(dummyData)
+        .expect(200)
+        .then(({ body }) => {
+          expect(convertDateToTimestamp(body.article)).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: 1594329060000,
+            votes: 101,
+          });
+        });
+    });
+    test(`Request body accepts:
+    an object in the form { inc_votes: newVote }
+    newVote will indicate how much the votes property
+    in the database should be updated by.
+    Responds with:
+    the updated article`, () => {
+      const dummyData = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(dummyData)
+        .expect(200)
+        .then(({ body }) => {
+          expect(convertDateToTimestamp(body.article)).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: 1594329060000,
+            votes: 90,
+          });
+        });
+    });
+    test("should get a 400 response when passed an empty object", () => {
+      const dummyData = {};
+      return request(app).patch("/api/articles/1").send(dummyData).expect(400);
+    });
+  });
 });
