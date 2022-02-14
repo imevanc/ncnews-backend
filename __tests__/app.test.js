@@ -128,7 +128,7 @@ describe("All Endpoints", () => {
   describe("/api/users", () => {
     describe("GET", () => {
       test(`This endpoint should respond with an array of objects, 
-      each object should have the following property`, () => {
+      each object should have the following property - "username"`, () => {
         return request(app)
           .get("/api/users")
           .expect(200)
