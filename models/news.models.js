@@ -32,3 +32,14 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return rows[0];
     });
 };
+
+exports.selectUsers = () => {
+  return db
+    .query(`SELECT * FROM users;`)
+    .then(({ rows }) => {
+      return rows;
+    })
+    .catch((error) => {
+      return error;
+    });
+};

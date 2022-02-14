@@ -124,4 +124,25 @@ describe("All Endpoints", () => {
       return request(app).patch("/api/articles/1").send(dummyData).expect(400);
     });
   });
+
+  describe("/api/users", () => {
+    describe("GET", () => {
+      test(`This endpoint should respond with an array of objects, 
+      each object should have the following property`, () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.users).toHaveLength(4);
+            response.body.users.forEach((aUser) => {
+              expect(aUser).toEqual(
+                expect.objectContaining({
+                  username: expect.any(String),
+                })
+              );
+            });
+          });
+      });
+    });
+  });
 });

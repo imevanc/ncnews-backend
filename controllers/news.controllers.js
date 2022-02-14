@@ -2,6 +2,7 @@ const {
   selectTopics,
   selectArticle,
   updateArticleById,
+  selectUsers,
 } = require("../models/news.models");
 
 exports.getTopics = (req, res) => {
@@ -23,5 +24,11 @@ exports.patchArticleById = (req, res) => {
   if (Object.keys(req.body).length === 0) return res.sendStatus(400);
   updateArticleById(article_id, inc_votes).then((article) => {
     res.status(200).send({ article });
+  });
+};
+
+exports.getUsers = (req, res) => {
+  selectUsers().then((users) => {
+    res.status(200).send({ users });
   });
 };
