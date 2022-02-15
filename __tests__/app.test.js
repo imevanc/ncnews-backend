@@ -126,7 +126,13 @@ describe("All Endpoints", () => {
   });
   test("should get a 400 response when passed an empty object", () => {
     const dummyData = {};
-    return request(app).patch("/api/articles/1").send(dummyData).expect(400);
+    return request(app)
+      .patch("/api/articles/1")
+      .send(dummyData)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
   });
   test("invalid article id", () => {
     const dummyData = { inc_votes: -10 };

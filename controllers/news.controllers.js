@@ -22,7 +22,10 @@ exports.getArticleById = (req, res) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  if (Object.keys(req.body).length === 0) return res.sendStatus(400);
+  if (Object.keys(req.body).length === 0) {
+    msg = "Bad Request";
+    return res.status(400).send({ msg });
+  }
   Promise.all([
     checkArticleExists(article_id),
     updateArticleById(article_id, inc_votes),
