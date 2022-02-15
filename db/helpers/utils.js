@@ -20,3 +20,11 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
+
+exports.convertDateToTimestamp = ({ created_at, ...otherProperties }) => {
+  if (!created_at) return { ...otherProperties };
+  let dbDate = new Date(created_at);
+  let offset = dbDate.getTimezoneOffset() * 60 * 1000;
+  let millisecondsDate = dbDate.getTime() - offset;
+  return { created_at: millisecondsDate, ...otherProperties };
+};
