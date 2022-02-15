@@ -94,7 +94,7 @@ describe("All Endpoints", () => {
               author: expect.any(String),
               body: expect.any(String),
               created_at: expect.any(String),
-              votes: expect.any(Number),
+              votes: 101,
             })
           );
         });
@@ -119,7 +119,7 @@ describe("All Endpoints", () => {
             author: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number),
+            votes: 90,
           })
         );
       });
@@ -133,14 +133,20 @@ describe("All Endpoints", () => {
     return request(app)
       .patch("/api/articles/an-invalid-id")
       .send(dummyData)
-      .expect(400);
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
   });
   test("valid but non-existed id", () => {
     const dummyData = { inc_votes: -10 };
     return request(app)
       .patch("/api/articles/12121212")
       .send(dummyData)
-      .expect(404);
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article Not found");
+      });
   });
 });
 
