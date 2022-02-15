@@ -11,7 +11,7 @@ exports.selectTopics = () => {
     });
 };
 
-exports.selectArtictles = () => {
+exports.selectArticles = () => {
   return db
     .query(`SELECT * FROM articles ORDER BY created_at DESC;`)
     .then(({ rows }) => {
