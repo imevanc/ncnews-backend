@@ -59,15 +59,17 @@ describe("All Endpoints", () => {
           .get("/api/articles/1")
           .expect(200)
           .then(({ body }) => {
-            expect(convertDateToTimestamp(body.article)).toEqual({
-              article_id: 1,
-              title: "Living in the shadow of a great man",
-              topic: "mitch",
-              author: "butter_bridge",
-              body: "I find this existence challenging",
-              created_at: 1594329060000,
-              votes: 100,
-            });
+            expect(convertDateToTimestamp(body.article)).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(Number),
+                votes: expect.any(Number),
+              })
+            );
           });
       });
     });
@@ -125,6 +127,20 @@ describe("All Endpoints", () => {
   test("should get a 400 response when passed an empty object", () => {
     const dummyData = {};
     return request(app).patch("/api/articles/1").send(dummyData).expect(400);
+  });
+  test("invalid article id", () => {
+    const dummyData = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/an-invalid-id")
+      .send(dummyData)
+      .expect(400);
+  });
+  test("valid but non-existed id", () => {
+    const dummyData = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/12121212")
+      .send(dummyData)
+      .expect(404);
   });
 });
 

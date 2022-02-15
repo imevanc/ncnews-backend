@@ -16,9 +16,16 @@ exports.selectArticle = (id) => {
     .query(`SELECT * FROM articles WHERE article_id=$1;`, [id])
     .then(({ rows }) => {
       return rows[0];
-    })
-    .catch((error) => {
-      return error;
+    });
+};
+
+exports.checkArticleExists = (article_id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id=$1", [article_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
     });
 };
 
@@ -34,12 +41,7 @@ exports.updateArticleById = (article_id, inc_votes) => {
 };
 
 exports.selectUsers = () => {
-  return db
-    .query(`SELECT * FROM users;`)
-    .then(({ rows }) => {
-      return rows;
-    })
-    .catch((error) => {
-      return error;
-    });
+  return db.query(`SELECT * FROM users;`).then(({ rows }) => {
+    return rows;
+  });
 };

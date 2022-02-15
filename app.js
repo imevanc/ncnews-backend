@@ -15,7 +15,20 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getUsers);
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  if (err.code === "22P02") {
+    res.status(400).send({ msg: "Bad request" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
   res.status(500).send("Server Error!");
 });
 

@@ -3,6 +3,7 @@ const {
   selectArticle,
   updateArticleById,
   selectUsers,
+  checkArticleExists,
 } = require("../models/news.models");
 
 exports.getTopics = (req, res) => {
@@ -18,13 +19,21 @@ exports.getArticleById = (req, res) => {
   });
 };
 
-exports.patchArticleById = (req, res) => {
+exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   if (Object.keys(req.body).length === 0) return res.sendStatus(400);
-  updateArticleById(article_id, inc_votes).then((article) => {
-    res.status(200).send({ article });
-  });
+  Promise.all([
+    checkArticleExists(article_id),
+    updateArticleById(article_id, inc_votes),
+  ])
+    .then((promisedData) => {
+      article = promisedData[1];
+      res.status(200).send({ article });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
 
 exports.getUsers = (req, res) => {
