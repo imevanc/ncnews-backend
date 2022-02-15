@@ -85,64 +85,66 @@ describe("All Endpoints", () => {
         .send(dummyData)
         .expect(200)
         .then(({ body }) => {
-          expect(convertDateToTimestamp(body.article)).toEqual({
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: 1594329060000,
-            votes: 101,
-          });
+          expect(body.article).toEqual(
+            expect.objectContaining({
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
         });
     });
-    test(`Request body accepts:
+  });
+  test(`Request body accepts:
     an object in the form { inc_votes: newVote }
     newVote will indicate how much the votes property
     in the database should be updated by.
     Responds with:
     the updated article`, () => {
-      const dummyData = { inc_votes: -10 };
+    const dummyData = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(dummyData)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          })
+        );
+      });
+  });
+  test("should get a 400 response when passed an empty object", () => {
+    const dummyData = {};
+    return request(app).patch("/api/articles/1").send(dummyData).expect(400);
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    test(`This endpoint should respond with an array of objects, 
+      each object should have the following property - "username"`, () => {
       return request(app)
-        .patch("/api/articles/1")
-        .send(dummyData)
+        .get("/api/users")
         .expect(200)
-        .then(({ body }) => {
-          expect(convertDateToTimestamp(body.article)).toEqual({
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: 1594329060000,
-            votes: 90,
+        .then((response) => {
+          expect(response.body.users).toHaveLength(4);
+          response.body.users.forEach((aUser) => {
+            expect(aUser).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            );
           });
         });
-    });
-    test("should get a 400 response when passed an empty object", () => {
-      const dummyData = {};
-      return request(app).patch("/api/articles/1").send(dummyData).expect(400);
-    });
-  });
-
-  describe("/api/users", () => {
-    describe("GET", () => {
-      test(`This endpoint should respond with an array of objects, 
-      each object should have the following property - "username"`, () => {
-        return request(app)
-          .get("/api/users")
-          .expect(200)
-          .then((response) => {
-            expect(response.body.users).toHaveLength(4);
-            response.body.users.forEach((aUser) => {
-              expect(aUser).toEqual(
-                expect.objectContaining({
-                  username: expect.any(String),
-                })
-              );
-            });
-          });
-      });
     });
   });
 });
