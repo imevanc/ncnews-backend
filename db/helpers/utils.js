@@ -28,3 +28,20 @@ exports.convertDateToTimestamp = ({ created_at, ...otherProperties }) => {
   let millisecondsDate = dbDate.getTime() - offset;
   return { created_at: millisecondsDate, ...otherProperties };
 };
+
+exports.customPatchErrorMsgs = (data) => {
+  const extraKeysOnThePatch = Object.entries(data).length > 1;
+  const misspeltKeyOnThePatch = Object.keys(data)[0] !== "inc_votes";
+  const noKeyOnThePatch = Object.keys(data).length === 0;
+  const incorrectDataTypeOnThePatch =
+    typeof Object.values(data)[0] !== "number";
+  const badRequestMessage =
+    misspeltKeyOnThePatch || noKeyOnThePatch || incorrectDataTypeOnThePatch;
+  if (extraKeysOnThePatch) {
+    return ["Forbidden", 403];
+  }
+  if (badRequestMessage) {
+    return ["Bad Request", 400];
+  }
+  return [undefined, undefined];
+};

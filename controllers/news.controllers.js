@@ -6,6 +6,8 @@ const {
   checkArticleExists,
 } = require("../models/news.models");
 
+const { customPatchErrorMsgs } = require("../db/helpers/utils");
+
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
     res.status(200).send({ topics });
@@ -21,11 +23,11 @@ exports.getArticleById = (req, res) => {
 
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  const { inc_votes } = req.body;
-  if (Object.keys(req.body).length === 0) {
-    msg = "Bad Request";
-    return res.status(400).send({ msg });
+  const [msg, status] = customPatchErrorMsgs(req.body);
+  if (status === 403 || status === 400) {
+    res.status(status).send({ msg });
   }
+  const { inc_votes } = req.body;
   Promise.all([
     checkArticleExists(article_id),
     updateArticleById(article_id, inc_votes),

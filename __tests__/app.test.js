@@ -134,6 +134,36 @@ describe("All Endpoints", () => {
         expect(msg).toBe("Bad Request");
       });
   });
+  test("misspelt key on the patch object", () => {
+    const dummyData = { mispelled_inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(dummyData)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test(`Incorrect data passed`, () => {
+    const dummyData = { inc_votes: "-10" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(dummyData)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("extra keys on the patch object", () => {
+    const dummyData = { inc_votes: -10, author: "Peter" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(dummyData)
+      .expect(403)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Forbidden");
+      });
+  });
   test("invalid article id", () => {
     const dummyData = { inc_votes: -10 };
     return request(app)
