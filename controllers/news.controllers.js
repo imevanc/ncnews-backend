@@ -5,6 +5,7 @@ const {
   selectUsers,
   checkArticleExists,
   selectArticles,
+  selectCommentsByArticleId,
 } = require("../models/news.models");
 
 const { customPatchErrorMsgs } = require("../db/helpers/utils");
@@ -42,6 +43,21 @@ exports.patchArticleById = (req, res, next) => {
     .then((promisedData) => {
       article = promisedData[1];
       res.status(200).send({ article });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  Promise.all([
+    checkArticleExists(article_id),
+    selectCommentsByArticleId(article_id),
+  ])
+    .then((promisedData) => {
+      comments = promisedData[1];
+      res.status(200).send({ comments });
     })
     .catch((error) => {
       next(error);

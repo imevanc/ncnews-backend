@@ -107,6 +107,49 @@ describe("All Endpoints", () => {
       });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+      test(`This endpoint should respond an array of comments
+      for the given article_id of which each comment should 
+      have the following properties:
+      comment_id
+      votes
+      created_at
+      author which is the username from the users table
+      body`, () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(convertDateToTimestamp(body.comments)).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(Number),
+                votes: expect.any(Number),
+              })
+            );
+          });
+      });
+      test("invalid article id", () => {
+        return request(app)
+          .get("/api/articles/an-invalid-id/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("valid but non-existed id", () => {
+        return request(app)
+          .get("/api/articles/12121212/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article Not found");
+          });
+      });
+    });
+  });
   describe("/api/articles/:article_id", () => {
     describe("GET", () => {
       test(`This endpoint should respond an article object, 
