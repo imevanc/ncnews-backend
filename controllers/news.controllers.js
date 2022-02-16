@@ -4,6 +4,7 @@ const {
   updateArticleById,
   selectUsers,
   checkArticleExists,
+  selectArticles,
 } = require("../models/news.models");
 
 const { customPatchErrorMsgs } = require("../db/helpers/utils");
@@ -11,6 +12,12 @@ const { customPatchErrorMsgs } = require("../db/helpers/utils");
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
     res.status(200).send({ topics });
+  });
+};
+
+exports.getArticles = (req, res) => {
+  selectArticles().then((articles) => {
+    res.status(200).send({ articles });
   });
 };
 
