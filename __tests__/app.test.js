@@ -131,6 +131,7 @@ describe("All Endpoints", () => {
                 body: expect.any(String),
                 created_at: expect.any(Number),
                 votes: expect.any(Number),
+                comment_count: expect.any(String),
               })
             );
           });
