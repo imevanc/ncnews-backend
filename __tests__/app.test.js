@@ -1,4 +1,3 @@
-const req = require("express/lib/request");
 const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection");
@@ -108,36 +107,36 @@ describe("All Endpoints", () => {
     });
   });
   describe("/api/articles/:article_id/comments", () => {
-    // let qStr =
-    //   "INSERT INTO comments (username, body) VALUES ($1, $2) (WHERE NO) RETURNING*;";
-    // describe("POST", () => {
-    //   test(`Request body accepts:
-    //   an object with the following properties:
-    //   username
-    //   body
-    //   Responds with:
-    //   the posted comment`, () => {
-    //     const dummyData = {
-    //       username: "butter_bridge",
-    //       body: "That's the body.",
-    //     };
-    //     return request(app)
-    //       .post("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(200)
-    //       .then(({ body }) => {
-    //         expect(body.article).toEqual(
-    //           expect.objectContaining({
-    //             title: expect.any(String),
-    //             topic: expect.any(String),
-    //             author: expect.any(String),
-    //             body: expect.any(String),
-    //             created_at: expect.any(String),
-    //             votes: 101,
-    //           })
-    //         );
-    //       });
-    //   });
+    describe("POST", () => {
+      test(`Request body accepts:
+      an object with the following properties:
+      username
+      body
+      Responds with:
+      the posted comment`, () => {
+        const dummyData = {
+          username: "butter_bridge",
+          body: "That's the body.",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                body: "That's the body.",
+                comment_id: expect.any(Number),
+                author: "butter_bridge",
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
+          });
+      });
+    });
     //   test(`Request body accepts:
     //   an object in the form { inc_votes: newVote }
     //   newVote will indicate how much the votes property

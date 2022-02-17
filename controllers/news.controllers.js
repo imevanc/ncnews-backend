@@ -6,6 +6,7 @@ const {
   checkArticleExists,
   selectArticles,
   selectCommentsByArticleId,
+  insertCommentByArticleId,
 } = require("../models/news.models");
 
 const { customPatchErrorMsgs } = require("../db/helpers/utils");
@@ -43,6 +44,18 @@ exports.patchArticleById = (req, res, next) => {
     .then((promisedData) => {
       article = promisedData[1];
       res.status(200).send({ article });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.postCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+  insertCommentByArticleId(username, body, article_id)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((error) => {
       next(error);
