@@ -72,6 +72,7 @@ describe("All Endpoints", () => {
       array of article objects, each of which should have 
       the following properties:
       author which is the username from the users table
+      comment_count
       title
       article_id
       topic
@@ -86,6 +87,7 @@ describe("All Endpoints", () => {
             response.body.articles.forEach((anArticle) => {
               expect(anArticle).toEqual(
                 expect.objectContaining({
+                  comment_count: expect.any(String),
                   article_id: expect.any(Number),
                   title: expect.any(String),
                   topic: expect.any(String),
@@ -103,6 +105,29 @@ describe("All Endpoints", () => {
                 response.body.articles[response.body.articles.length - 1]
               ).created_at
             );
+          });
+      });
+      test(`Test that the articles are sorted in desc order`, () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
+            expect(
+              convertDateToTimestamp(response.body.articles[0]).created_at
+            ).toBeGreaterThanOrEqual(
+              convertDateToTimestamp(
+                response.body.articles[response.body.articles.length - 1]
+              ).created_at
+            );
+          });
+      });
+      test(`Test the value of comment_count for a specific
+      article in the array`, () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles[0].comment_count).toBe("2");
           });
       });
     });

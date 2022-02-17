@@ -13,7 +13,13 @@ exports.selectTopics = () => {
 
 exports.selectArticles = () => {
   return db
-    .query(`SELECT * FROM articles ORDER BY created_at DESC;`)
+    .query(
+      `SELECT articles.*, COUNT(comments.body) AS comment_count
+      FROM articles
+      LEFT JOIN comments ON comments.article_id = articles.article_id
+      GROUP BY articles.article_id
+      ORDER BY articles.created_at DESC;`
+    )
     .then(({ rows }) => {
       return rows;
     })
