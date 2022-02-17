@@ -155,7 +155,8 @@ describe("All Endpoints", () => {
             expect(msg).toBe("Bad Request");
           });
       });
-      test(`Incorrect data passed`, () => {
+      test(`Incorrect data (ie type of value 
+        from the k,v pair) passed`, () => {
         const dummyData = { username: 1, body: "Body" };
         return request(app)
           .post("/api/articles/1/comments")
@@ -163,6 +164,16 @@ describe("All Endpoints", () => {
           .expect(400)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Bad Request");
+          });
+      });
+      test(`Username does not exist.`, () => {
+        const dummyData = { username: "Jacob", body: "Body" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Username Not Found");
           });
       });
       test("extra keys on the post object", () => {

@@ -7,6 +7,7 @@ const {
   selectArticles,
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  checkUsernameExists,
 } = require("../models/news.models");
 
 const { customErrorMsgs } = require("../db/helpers/utils");
@@ -68,9 +69,10 @@ exports.postCommentsByArticleId = (req, res, next) => {
   const { username, body } = req.body;
   Promise.all([
     checkArticleExists(article_id),
+    checkUsernameExists(username),
     insertCommentByArticleId(username, body, article_id),
   ])
-    .then(([, promisedData]) => {
+    .then(([, , promisedData]) => {
       comment = promisedData;
       res.status(201).send({ comment });
     })

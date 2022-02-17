@@ -21,6 +21,7 @@ exports.selectArticles = () => {
       return error;
     });
 };
+
 exports.selectArticle = (id) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id=$1;`, [id])
@@ -55,6 +56,16 @@ exports.selectCommentsByArticleId = (article_id) => {
     .query("SELECT * FROM comments WHERE article_id=$1", [article_id])
     .then(({ rows }) => {
       return rows[0];
+    });
+};
+
+exports.checkUsernameExists = (name) => {
+  return db
+    .query("SELECT * FROM users WHERE username=$1", [name])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Username Not Found" });
+      }
     });
 };
 
