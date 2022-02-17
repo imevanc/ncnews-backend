@@ -17,6 +17,8 @@ exports.getTopics = (req, res) => {
 };
 
 exports.getArticles = (req, res) => {
+  // const { sort_by } = req.query;
+  console.log("all_queries", req.query);
   selectArticles().then((articles) => {
     res.status(200).send({ articles });
   });

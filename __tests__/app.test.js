@@ -97,13 +97,6 @@ describe("All Endpoints", () => {
                 })
               );
             });
-            expect(
-              convertDateToTimestamp(response.body.articles[0]).created_at
-            ).toBeGreaterThanOrEqual(
-              convertDateToTimestamp(
-                response.body.articles[response.body.articles.length - 1]
-              ).created_at
-            );
           });
       });
       test(`Test that the articles are sorted in desc order`, () => {
@@ -127,6 +120,20 @@ describe("All Endpoints", () => {
           .expect(200)
           .then((response) => {
             expect(response.body.articles[0].comment_count).toBe("2");
+          });
+      });
+      test.only(`Test the value of just one query - sort by`, () => {
+        return request(app)
+          .get("/api/articles/?sort_by=&order=&topic=")
+          .expect(200)
+          .then((response) => {
+            expect(
+              convertDateToTimestamp(response.body.articles[0]).created_at
+            ).toBeGreaterThanOrEqual(
+              convertDateToTimestamp(
+                response.body.articles[response.body.articles.length - 1]
+              ).created_at
+            );
           });
       });
     });
