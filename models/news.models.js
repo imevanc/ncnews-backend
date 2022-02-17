@@ -14,7 +14,9 @@ exports.selectTopics = () => {
 exports.selectArticles = () => {
   return db
     .query(
-      `SELECT articles.*, COUNT(comments.body) AS comment_count
+      `SELECT articles.article_id, articles.title, articles.topic, 
+      articles.created_at, articles.votes, articles.author,
+      COUNT(comments.body) AS comment_count
       FROM articles
       LEFT JOIN comments ON comments.article_id = articles.article_id
       GROUP BY articles.article_id
