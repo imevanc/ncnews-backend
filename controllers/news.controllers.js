@@ -9,7 +9,7 @@ const {
   insertCommentByArticleId,
 } = require("../models/news.models");
 
-const { customPatchErrorMsgs } = require("../db/helpers/utils");
+const { customErrorMsgs } = require("../db/helpers/utils");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -32,7 +32,9 @@ exports.getArticleById = (req, res) => {
 
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  const [msg, status] = customPatchErrorMsgs(req.body);
+  const data = req.body;
+  const len = Object.keys(req.body).length;
+  const [msg, status] = customErrorMsgs(data, len, ["inc_votes"], ["number"]);
   if (status === 403 || status === 400) {
     res.status(status).send({ msg });
   }
@@ -52,9 +54,24 @@ exports.patchArticleById = (req, res, next) => {
 
 exports.postCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const data = req.body;
+  const len = Object.keys(req.body).length;
+  const [msg, status] = customErrorMsgs(
+    data,
+    len,
+    ["username", "body"],
+    ["string", "string"]
+  );
+  if (status === 403 || status === 400) {
+    res.status(status).send({ msg });
+  }
   const { username, body } = req.body;
-  insertCommentByArticleId(username, body, article_id)
-    .then((comment) => {
+  Promise.all([
+    checkArticleExists(article_id),
+    insertCommentByArticleId(username, body, article_id),
+  ])
+    .then(([, promisedData]) => {
+      comment = promisedData;
       res.status(201).send({ comment });
     })
     .catch((error) => {

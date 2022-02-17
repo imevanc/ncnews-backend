@@ -129,99 +129,74 @@ describe("All Endpoints", () => {
                 body: "That's the body.",
                 comment_id: expect.any(Number),
                 author: "butter_bridge",
-                body: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
               })
             );
           });
       });
+      test("should get a 400 response when passed an empty object", () => {
+        const dummyData = {};
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("misspelt key on the post object", () => {
+        const dummyData = { mispelled_username: "butter_bridge", body: "Body" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test(`Incorrect data passed`, () => {
+        const dummyData = { username: 1, body: "Body" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("extra keys on the post object", () => {
+        const dummyData = { username: "butter_bridge", body: "Body", votes: 1 };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(dummyData)
+          .expect(403)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Forbidden");
+          });
+      });
+
+      test("invalid article id", () => {
+        const dummyData = { username: "butter_bridge", body: "Body" };
+        return request(app)
+          .post("/api/articles/an-invalid-id/comments")
+          .send(dummyData)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("valid but non-existed id", () => {
+        const dummyData = { username: "butter_bridge", body: "Body" };
+        return request(app)
+          .post("/api/articles/12121212/comments")
+          .send(dummyData)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article Not found");
+          });
+      });
     });
-    //   test(`Request body accepts:
-    //   an object in the form { inc_votes: newVote }
-    //   newVote will indicate how much the votes property
-    //   in the database should be updated by.
-    //   Responds with:
-    //   the updated article`, () => {
-    //     const dummyData = { inc_votes: -10 };
-    //     return request(app)
-    //       .patch("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(200)
-    //       .then(({ body }) => {
-    //         expect(body.article).toEqual(
-    //           expect.objectContaining({
-    //             title: expect.any(String),
-    //             topic: expect.any(String),
-    //             author: expect.any(String),
-    //             body: expect.any(String),
-    //             created_at: expect.any(String),
-    //             votes: 90,
-    //           })
-    //         );
-    //       });
-    //   });
-    //   test("should get a 400 response when passed an empty object", () => {
-    //     const dummyData = {};
-    //     return request(app)
-    //       .patch("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(400)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Bad Request");
-    //       });
-    //   });
-    //   test("misspelt key on the patch object", () => {
-    //     const dummyData = { mispelled_inc_votes: -10 };
-    //     return request(app)
-    //       .patch("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(400)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Bad Request");
-    //       });
-    //   });
-    //   test(`Incorrect data passed`, () => {
-    //     const dummyData = { inc_votes: "-10" };
-    //     return request(app)
-    //       .patch("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(400)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Bad Request");
-    //       });
-    //   });
-    //   test("extra keys on the patch object", () => {
-    //     const dummyData = { inc_votes: -10, author: "Peter" };
-    //     return request(app)
-    //       .patch("/api/articles/1")
-    //       .send(dummyData)
-    //       .expect(403)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Forbidden");
-    //       });
-    //   });
-    //   test("invalid article id", () => {
-    //     const dummyData = { inc_votes: -10 };
-    //     return request(app)
-    //       .patch("/api/articles/an-invalid-id")
-    //       .send(dummyData)
-    //       .expect(400)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Bad Request");
-    //       });
-    //   });
-    //   test("valid but non-existed id", () => {
-    //     const dummyData = { inc_votes: -10 };
-    //     return request(app)
-    //       .patch("/api/articles/12121212")
-    //       .send(dummyData)
-    //       .expect(404)
-    //       .then(({ body: { msg } }) => {
-    //         expect(msg).toBe("Article Not found");
-    //       });
-    //   });
-    // });
     describe("GET", () => {
       test(`This endpoint should respond an array of comments
       for the given article_id of which each comment should 
