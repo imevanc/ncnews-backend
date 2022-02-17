@@ -105,6 +105,28 @@ describe("All Endpoints", () => {
                 response.body.articles[response.body.articles.length - 1]
               ).created_at
             );
+          });
+      });
+      test(`Test that the articles are sorted in desc order`, () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
+            expect(
+              convertDateToTimestamp(response.body.articles[0]).created_at
+            ).toBeGreaterThanOrEqual(
+              convertDateToTimestamp(
+                response.body.articles[response.body.articles.length - 1]
+              ).created_at
+            );
+          });
+      });
+      test(`Test the value of comment_count for a specific
+      article in the array`, () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((response) => {
             expect(response.body.articles[0].comment_count).toBe("2");
           });
       });
