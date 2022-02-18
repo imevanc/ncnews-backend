@@ -79,10 +79,10 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles")
+          .get("/api/articles/?sort_by=title&order=DESC&topic=mitch")
           .expect(200)
           .then((response) => {
-            expect(response.body.articles).toHaveLength(12);
+            expect(response.body.articles).toHaveLength(11);
             response.body.articles.forEach((anArticle) => {
               expect(anArticle).toEqual(
                 expect.objectContaining({
@@ -91,24 +91,16 @@ describe("All Endpoints", () => {
                   title: expect.any(String),
                   topic: expect.any(String),
                   author: expect.any(String),
-                  body: expect.any(String),
                   created_at: expect.any(String),
                   votes: expect.any(Number),
                 })
               );
             });
-            expect(
-              convertDateToTimestamp(response.body.articles[0]).created_at
-            ).toBeGreaterThanOrEqual(
-              convertDateToTimestamp(
-                response.body.articles[response.body.articles.length - 1]
-              ).created_at
-            );
           });
       });
       test(`Test that the articles are sorted in desc order`, () => {
         return request(app)
-          .get("/api/articles")
+          .get("/api/articles/?sort_by=title&order=ASC&topic=mitch")
           .expect(200)
           .then((response) => {
             expect(
@@ -123,10 +115,24 @@ describe("All Endpoints", () => {
       test(`Test the value of comment_count for a specific
       article in the array`, () => {
         return request(app)
-          .get("/api/articles")
+          .get("/api/articles?sort_by=title&order=DESC&topic=cats")
           .expect(200)
           .then((response) => {
             expect(response.body.articles[0].comment_count).toBe("2");
+          });
+      });
+      test(`Test the value of just one query - sort by`, () => {
+        return request(app)
+          .get("/api/articles/?sort_by=title&order=DESC&topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toBeSortedBy("title", {
+              descending: true,
+            });
+            articles.forEach((article) => {
+              expect(article.topic).toBe("mitch");
+            });
           });
       });
     });
@@ -416,7 +422,6 @@ describe("All Endpoints", () => {
       });
     });
   });
-
   describe("/api/users", () => {
     describe("GET", () => {
       test(`This endpoint should respond with an array of objects, 

@@ -1,4 +1,6 @@
+const { query } = require("../db/connection");
 const db = require("../db/connection");
+const { sort } = require("../db/data/test-data/articles");
 
 exports.selectTopics = () => {
   return db
@@ -11,20 +13,28 @@ exports.selectTopics = () => {
     });
 };
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
+  let queryStr = `SELECT articles.*,
+  COUNT(comments.body) AS comment_count
+  FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id\n`;
+  if (topic) {
+    queryStr += `WHERE articles.topic ILIKE $1\n`;
+  }
+  queryStr += `GROUP BY articles.article_id
+  ORDER BY ${sort_by} ${order};`;
+  return db.query(queryStr, [topic]).then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.checkTopicExists = (topic) => {
   return db
-    .query(
-      `SELECT articles.*, COUNT(comments.body) AS comment_count
-      FROM articles
-      LEFT JOIN comments ON comments.article_id = articles.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC;`
-    )
+    .query(`SELECT * FROM topics WHERE slug=$1`, [topic])
     .then(({ rows }) => {
-      return rows;
-    })
-    .catch((error) => {
-      return error;
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Topic Not Found" });
+      }
     });
 };
 

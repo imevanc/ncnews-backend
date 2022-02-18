@@ -69,3 +69,42 @@ exports.customErrorMsgs = (data, len, theKey, theValue) => {
   }
   return [undefined, undefined];
 };
+
+exports.sortByIsValid = (sort_by) => {
+  const articles = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    undefined,
+  ];
+  return articles.reduce((isSortByExists, column) => {
+    if (column === sort_by) {
+      isSortByExists = true;
+    }
+    return isSortByExists;
+  }, false);
+};
+
+exports.orderIsValid = (order) => {
+  return !(order !== "ASC" && order !== "DESC" && order !== undefined);
+};
+
+exports.invalidQuery = (data) => {
+  return (
+    Object.keys(data).length !==
+    Object.keys(data).reduce((counter, property) => {
+      if (
+        property === "sort_by" ||
+        property === "order" ||
+        property === "topic"
+      ) {
+        counter++;
+      }
+      return counter;
+    }, 0)
+  );
+};
