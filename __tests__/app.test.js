@@ -416,7 +416,6 @@ describe("All Endpoints", () => {
       });
     });
   });
-
   describe("/api/users", () => {
     describe("GET", () => {
       test(`This endpoint should respond with an array of objects, 
@@ -433,6 +432,32 @@ describe("All Endpoints", () => {
                 })
               );
             });
+          });
+      });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+      test(`Should:
+      delete the given comment by comment_id
+      Responds with:
+      status 204 and no content`, () => {
+        return request(app).delete("/api/comments/1").expect(204);
+      });
+      test("invalid comment id", () => {
+        return request(app)
+          .delete("/api/comments/an-invalid-id")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("valid but non-existed id", () => {
+        return request(app)
+          .delete("/api/comments/12121212")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Comment Not Found");
           });
       });
     });
