@@ -20,6 +20,8 @@ const {
   invalidQuery,
 } = require("../db/helpers/utils");
 
+const endpoints = require("../endpoints.json");
+
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
     res.status(200).send({ topics });
@@ -132,4 +134,8 @@ exports.deleteCommentById = (req, res, next) => {
     .catch((error) => {
       next(error);
     });
+};
+
+exports.getApi = (req, res) => {
+  res.status(200).send({ endpoints });
 };
