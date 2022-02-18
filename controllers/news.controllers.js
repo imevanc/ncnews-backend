@@ -6,9 +6,15 @@ const {
   checkArticleExists,
   selectArticles,
   selectCommentsByArticleId,
+  checkTopicExists,
 } = require("../models/news.models");
 
-const { customPatchErrorMsgs } = require("../db/helpers/utils");
+const {
+  customPatchErrorMsgs,
+  sortByIsValid,
+  orderIsValid,
+  invalidQuery,
+} = require("../db/helpers/utils");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -16,12 +22,23 @@ exports.getTopics = (req, res) => {
   });
 };
 
-exports.getArticles = (req, res) => {
-  // const { sort_by } = req.query;
-  console.log("all_queries", req.query);
-  selectArticles().then((articles) => {
-    res.status(200).send({ articles });
-  });
+exports.getArticles = (req, res, next) => {
+  let { sort_by, order, topic } = req.query;
+
+  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
+    res.status(400).send("Bad Request");
+  }
+  if (invalidQuery(req.query)) {
+    res.status(403).send("Forbidden");
+  }
+
+  Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
+    .then(([, articles]) => {
+      res.status(200).send({ articles });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
 
 exports.getArticleById = (req, res) => {
