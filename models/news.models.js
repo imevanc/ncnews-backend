@@ -82,6 +82,28 @@ exports.selectCommentsByArticleId = (article_id) => {
     });
 };
 
+exports.checkUsernameExists = (name) => {
+  return db
+    .query("SELECT * FROM users WHERE username=$1", [name])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Username Not Found" });
+      }
+    });
+};
+
+exports.insertCommentByArticleId = (username, body, article_id) => {
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id) 
+      VALUES ($1, $2, $3)  RETURNING * ;`,
+      [username, body, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 exports.selectUsers = () => {
   return db.query(`SELECT * FROM users;`).then(({ rows }) => {
     return rows;

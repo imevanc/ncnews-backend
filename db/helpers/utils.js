@@ -29,15 +29,39 @@ exports.convertDateToTimestamp = ({ created_at, ...otherProperties }) => {
   return { created_at: millisecondsDate, ...otherProperties };
 };
 
-exports.customPatchErrorMsgs = (data) => {
-  const extraKeysOnThePatch = Object.entries(data).length > 1;
-  const misspeltKeyOnThePatch = Object.keys(data)[0] !== "inc_votes";
-  const noKeyOnThePatch = Object.keys(data).length === 0;
-  const incorrectDataTypeOnThePatch =
-    typeof Object.values(data)[0] !== "number";
-  const badRequestMessage =
-    misspeltKeyOnThePatch || noKeyOnThePatch || incorrectDataTypeOnThePatch;
-  if (extraKeysOnThePatch) {
+exports.customErrorMsgs = (data, len, theKey, theValue) => {
+  const extraKeys = Object.entries(theKey).length < len;
+  const arrayOr = (arr) => {
+    return arr.reduce((ans, el) => {
+      ans ||= el;
+      return ans;
+    }, false);
+  };
+  const isMisspeltKey = Object.keys(data).reduce((isMispelt, el, idx) => {
+    if (el !== theKey[idx]) {
+      isMispelt.push(true);
+    } else {
+      isMispelt.push(false);
+    }
+    return isMispelt;
+  }, []);
+  const misspeltKey = arrayOr(isMisspeltKey);
+  const noKey = Object.keys(data).length === 0;
+  const isIncorrectDataType = Object.values(data).reduce(
+    (isIncorrent, el, idx) => {
+      if (typeof el !== theValue[idx]) {
+        isIncorrent.push(true);
+      } else {
+        isIncorrent.push(false);
+      }
+      return isIncorrent;
+    },
+    []
+  );
+  const incorrectDataType = arrayOr(isIncorrectDataType);
+
+  const badRequestMessage = misspeltKey || noKey || incorrectDataType;
+  if (extraKeys) {
     return ["Forbidden", 403];
   }
   if (badRequestMessage) {
