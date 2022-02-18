@@ -9,6 +9,8 @@ const {
   checkTopicExists,
   insertCommentByArticleId,
   checkUsernameExists,
+  removeCommentById,
+  checkCommentIdExists,
 } = require("../models/news.models");
 
 const {
@@ -119,4 +121,15 @@ exports.getUsers = (req, res) => {
   selectUsers().then((users) => {
     res.status(200).send({ users });
   });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  Promise.all([checkCommentIdExists(comment_id), removeCommentById(comment_id)])
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
