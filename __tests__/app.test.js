@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index.js");
 const { convertDateToTimestamp } = require("../db/helpers/utils");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -464,6 +465,18 @@ describe("All Endpoints", () => {
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).toBe("Comment Not Found");
+          });
+      });
+    });
+  });
+  describe("/api", () => {
+    describe("GET", () => {
+      test("should return the endpoint.json file", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.endpoints).toEqual(endpoints);
           });
       });
     });
