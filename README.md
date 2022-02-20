@@ -3,8 +3,6 @@
 This is a JS news application created with Node.js, Express & PostgreSQL. It's hosted on Heroku.
 
 # Table of contents
-- [NCNEWS-BACKEND](#ncnews-backend)
-- [Table of contents](#table-of-contents)
 - [General-Information <a name="general-information"></a>](#general-information-)
 - [Technologies <a name="technologies"></a>](#technologies-)
 - [Setup <a name="setup"></a>](#setup-)
