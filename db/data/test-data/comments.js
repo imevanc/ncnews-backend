@@ -125,4 +125,11 @@ module.exports = [
     article_id: 1,
     created_at: 1595294400000,
   },
+  {
+    body: "",
+    votes: 0,
+    author: "butter_bridge",
+    article_id: 2,
+    created_at: 1595294400000,
+  },
 ];
