@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,6 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "devDependencies": {
-    "dotenv": "^16.0.0",
     "husky": "^7.0.0",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
@@ -30,7 +31,8 @@
     "supertest": "^6.2.2"
   },
   "dependencies": {
-    "express": "^4.17.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
     "node-postgres": "^0.6.2",
     "pg": "^8.7.3"
   },
