@@ -80,7 +80,7 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles/?sort_by=title&order=DESC&topic=mitch")
+          .get("/api/articles/?sort_by=created_at&order=DESC&topic=mitch")
           .expect(200)
           .then((response) => {
             expect(response.body.articles).toHaveLength(11);
@@ -101,12 +101,12 @@ describe("All Endpoints", () => {
       });
       test(`Test that the articles are sorted in desc order`, () => {
         return request(app)
-          .get("/api/articles/?sort_by=title&order=ASC&topic=mitch")
+          .get("/api/articles/?sort_by=votes&order=DESC&topic=mitch")
           .expect(200)
           .then((response) => {
             expect(
               convertDateToTimestamp(response.body.articles[0]).created_at
-            ).toBeGreaterThanOrEqual(
+            ).toBeLessThanOrEqual(
               convertDateToTimestamp(
                 response.body.articles[response.body.articles.length - 1]
               ).created_at
@@ -124,16 +124,34 @@ describe("All Endpoints", () => {
       });
       test(`Test the value of just one query - sort by`, () => {
         return request(app)
-          .get("/api/articles/?sort_by=title&order=DESC&topic=mitch")
+          .get("/api/articles/?sort_by=votes&order=DESC&topic=mitch")
           .expect(200)
           .then(({ body }) => {
             const { articles } = body;
-            expect(articles).toBeSortedBy("title", {
+            expect(articles).toBeSortedBy("votes", {
               descending: true,
             });
+            expect(articles.length).toBeGreaterThan(0);
             articles.forEach((article) => {
               expect(article.topic).toBe("mitch");
             });
+          });
+      });
+      test(`Valid topic query`, () => {
+        return request(app)
+          .get("/api/articles/?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toHaveLength(0);
+          });
+      });
+      test(`Non-existed queries`, () => {
+        return request(app)
+          .get("/api/articles/?sort_by=n")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
           });
       });
     });
@@ -280,6 +298,14 @@ describe("All Endpoints", () => {
             expect(msg).toBe("Article Not found");
           });
       });
+      test("valid id no comments", () => {
+        return request(app)
+          .get("/api/articles/10/comments")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.comments).toHaveLength(0);
+          });
+      });
     });
   });
   describe("/api/articles/:article_id", () => {
@@ -309,6 +335,22 @@ describe("All Endpoints", () => {
                 comment_count: "11",
               })
             );
+          });
+      });
+      test("invalid article id", () => {
+        return request(app)
+          .get("/api/articles/an-invalid-id")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
+      test("valid but non-existed id", () => {
+        return request(app)
+          .get("/api/articles/12121212")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Article Not found");
           });
       });
     });

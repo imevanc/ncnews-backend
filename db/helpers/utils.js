@@ -71,7 +71,7 @@ exports.customErrorMsgs = (data, len, theKey, theValue) => {
 };
 
 exports.sortByIsValid = (sort_by) => {
-  const articles = [
+  const filters = [
     "article_id",
     "title",
     "topic",
@@ -81,7 +81,7 @@ exports.sortByIsValid = (sort_by) => {
     "votes",
     undefined,
   ];
-  return articles.reduce((isSortByExists, column) => {
+  return filters.reduce((isSortByExists, column) => {
     if (column === sort_by) {
       isSortByExists = true;
     }
@@ -91,20 +91,4 @@ exports.sortByIsValid = (sort_by) => {
 
 exports.orderIsValid = (order) => {
   return !(order !== "ASC" && order !== "DESC" && order !== undefined);
-};
-
-exports.invalidQuery = (data) => {
-  return (
-    Object.keys(data).length !==
-    Object.keys(data).reduce((counter, property) => {
-      if (
-        property === "sort_by" ||
-        property === "order" ||
-        property === "topic"
-      ) {
-        counter++;
-      }
-      return counter;
-    }, 0)
-  );
 };

@@ -21,6 +21,7 @@ const {
 } = require("../db/helpers/utils");
 
 const endpoints = require("../endpoints.json");
+const { sort } = require("../db/data/test-data/articles");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -30,12 +31,12 @@ exports.getTopics = (req, res) => {
 
 exports.getArticles = (req, res, next) => {
   let { sort_by, order, topic } = req.query;
+  if (!sort_by && !order && topic.length) {
+    res.status(200).send({ articles: [] });
+  }
 
   if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-    res.status(400).send("Bad Request");
-  }
-  if (invalidQuery(req.query)) {
-    res.status(403).send("Forbidden");
+    res.status(400).send({ msg: "Bad Request" });
   }
 
   Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
@@ -47,11 +48,16 @@ exports.getArticles = (req, res, next) => {
     });
 };
 
-exports.getArticleById = (req, res) => {
+exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  selectArticle(article_id).then((article) => {
-    res.status(200).send({ article });
-  });
+  Promise.all([checkArticleExists(article_id), selectArticle(article_id)])
+    .then(([, promisedData]) => {
+      article = promisedData;
+      res.status(200).send({ article });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
 
 exports.patchArticleById = (req, res, next) => {
