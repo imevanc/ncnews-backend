@@ -13,20 +13,24 @@ exports.selectTopics = () => {
     });
 };
 
-// exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
-//   let queryStr = `SELECT articles.*,
-//   COUNT(comments.body) AS comment_count
-//   FROM articles
-//   LEFT JOIN comments ON comments.article_id = articles.article_id\n`;
-//   if (topic) {
-//     queryStr += `WHERE articles.topic ILIKE $1\n`;
-//   }
-//   queryStr += `GROUP BY articles.article_id
-//   ORDER BY ${sort_by} ${order};`;
-//   return db.query(queryStr, [topic]).then(({ rows }) => {
-//     return rows;
-//   });
-// };
+exports.selectArticlesByTopic = (
+  sort_by = "created_at",
+  order = "DESC",
+  topic
+) => {
+  let queryStr = `SELECT articles.*,
+  COUNT(comments.body) AS comment_count
+  FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id\n`;
+  if (topic) {
+    queryStr += `WHERE articles.topic ILIKE $1\n`;
+  }
+  queryStr += `GROUP BY articles.article_id
+  ORDER BY ${sort_by} ${order};`;
+  return db.query(queryStr, [topic]).then(({ rows }) => {
+    return rows;
+  });
+};
 
 exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   let queryStr = `SELECT articles.*,

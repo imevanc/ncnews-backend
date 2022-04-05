@@ -11,6 +11,7 @@ const {
   checkUsernameExists,
   removeCommentById,
   checkCommentIdExists,
+  selectArticlesByTopic,
 } = require("../models/news.models");
 
 const {
@@ -29,27 +30,30 @@ exports.getTopics = (req, res) => {
   });
 };
 
-// exports.getArticles = (req, res, next) => {
-//   let { sort_by, order, topic } = req.query;
-
-//   if (!sort_by && !order && topic.length) {
-//     res.status(200).send({ articles: [] });
-//   }
-
-//   if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-//     res.status(400).send({ msg: "Bad Request" });
-//   }
-
-//   Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
-//     .then(([, articles]) => {
-//       res.status(200).send({ articles });
-//     })
-//     .catch((error) => {
-//       next(error);
-//     });
-// };
+getArticlesByTopic = (sort_by, order, topic, res, next) => {
+  if (!sort_by && !order && topic.length) {
+    res.status(200).send({ articles: [] });
+  }
+  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
+    res.status(400).send({ msg: "Bad Request" });
+  }
+  Promise.all([
+    checkTopicExists(topic),
+    selectArticlesByTopic(sort_by, order, topic),
+  ])
+    .then(([, articles]) => {
+      res.status(200).send({ articles });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
 
 exports.getArticles = (req, res, next) => {
+  let { sort_by, order, topic } = req.query;
+  if (sort_by || order || topic) {
+    getArticlesByTopic(sort_by, order, topic, res, next);
+  }
   selectArticles()
     .then((articles) => {
       res.status(200).send({ articles });
