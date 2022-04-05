@@ -166,7 +166,7 @@ describe("All Endpoints", () => {
       the posted comment`, () => {
         const dummyData = {
           username: "butter_bridge",
-          body: "That's the body.",
+          body: "ll",
         };
         return request(app)
           .post("/api/articles/1/comments")
@@ -176,7 +176,7 @@ describe("All Endpoints", () => {
             expect(body.comment).toEqual(
               expect.objectContaining({
                 article_id: 1,
-                body: "That's the body.",
+                body: "ll",
                 comment_id: expect.any(Number),
                 author: "butter_bridge",
                 created_at: expect.any(String),
