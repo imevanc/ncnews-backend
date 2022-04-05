@@ -22,7 +22,6 @@ const {
 } = require("../db/helpers/utils");
 
 const endpoints = require("../endpoints.json");
-const { sort } = require("../db/data/test-data/articles");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
