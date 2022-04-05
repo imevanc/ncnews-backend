@@ -92,6 +92,7 @@ exports.postCommentsByArticleId = (req, res, next) => {
     ["username", "body"],
     ["string", "string"]
   );
+  console.log(data, msg);
   if (status === 403 || status === 400) {
     res.status(status).send({ msg });
   }
