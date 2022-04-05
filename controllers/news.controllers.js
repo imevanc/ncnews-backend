@@ -34,9 +34,6 @@ getArticlesByTopic = (sort_by, order, topic, res, next) => {
   if (!sort_by && !order && topic.length) {
     res.status(200).send({ articles: [] });
   }
-  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-    res.status(400).send({ msg: "Bad Request" });
-  }
   Promise.all([
     checkTopicExists(topic),
     selectArticlesByTopic(sort_by, order, topic),
@@ -51,7 +48,10 @@ getArticlesByTopic = (sort_by, order, topic, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   let { sort_by, order, topic } = req.query;
-  if (sort_by || order || topic) {
+  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
+    res.status(400).send({ msg: "Bad Request" });
+  }
+  if (topic) {
     getArticlesByTopic(sort_by, order, topic, res, next);
   }
   selectArticles()

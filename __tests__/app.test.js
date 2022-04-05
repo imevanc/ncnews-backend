@@ -80,7 +80,7 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles")
+          .get("/api/articles?order=ASC")
           .expect(200)
           .then((response) => {
             expect(response.body.articles).toHaveLength(12);
@@ -124,7 +124,7 @@ describe("All Endpoints", () => {
       });
       test(`Test the value of just one query - sort by`, () => {
         return request(app)
-          .get("/api/articles/?sort_by=votes&topic=mitch")
+          .get("/api/articles/?sort_by=votes&topic=cats")
           .expect(200)
           .then(({ body }) => {
             const { articles } = body;
@@ -133,7 +133,7 @@ describe("All Endpoints", () => {
             });
             expect(articles.length).toBeGreaterThan(0);
             articles.forEach((article) => {
-              expect(article.topic).toBe("mitch");
+              expect(article.topic).toBe("cats");
             });
           });
       });
