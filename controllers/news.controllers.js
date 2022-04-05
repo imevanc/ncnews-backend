@@ -29,18 +29,29 @@ exports.getTopics = (req, res) => {
   });
 };
 
+// exports.getArticles = (req, res, next) => {
+//   let { sort_by, order, topic } = req.query;
+
+//   if (!sort_by && !order && topic.length) {
+//     res.status(200).send({ articles: [] });
+//   }
+
+//   if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
+//     res.status(400).send({ msg: "Bad Request" });
+//   }
+
+//   Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
+//     .then(([, articles]) => {
+//       res.status(200).send({ articles });
+//     })
+//     .catch((error) => {
+//       next(error);
+//     });
+// };
+
 exports.getArticles = (req, res, next) => {
-  let { sort_by, order, topic } = req.query;
-  if (!sort_by && !order && topic.length) {
-    res.status(200).send({ articles: [] });
-  }
-
-  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-    res.status(400).send({ msg: "Bad Request" });
-  }
-
-  Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
-    .then(([, articles]) => {
+  selectArticles()
+    .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch((error) => {
