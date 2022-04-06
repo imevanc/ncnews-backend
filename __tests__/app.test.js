@@ -143,7 +143,7 @@ describe("All Endpoints", () => {
           .expect(200)
           .then(({ body }) => {
             const { articles } = body;
-            expect(articles).toHaveLength(0);
+            expect(articles).toHaveLength(11);
           });
       });
       test(`Existed queries with invalid values`, () => {

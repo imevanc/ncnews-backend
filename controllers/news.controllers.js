@@ -48,7 +48,7 @@ orderIsValid = (order) => {
 };
 
 getArticlesByTopic = (sort_by, order, topic, res, next) => {
-  if (!sort_by && !order && topic.length) {
+  if (!sort_by && !order && topic.length === 0) {
     return res.status(200).send({ articles: [] });
   }
   Promise.all([
