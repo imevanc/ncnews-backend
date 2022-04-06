@@ -3,6 +3,8 @@
 This is a JS news application created with Node.js, Express & PostgreSQL. It's hosted on Heroku.
 
 # Table of contents
+- [NCNEWS-BACKEND](#ncnews-backend)
+- [Table of contents](#table-of-contents)
 - [General-Information <a name="general-information"></a>](#general-information-)
 - [Technologies <a name="technologies"></a>](#technologies-)
 - [Setup <a name="setup"></a>](#setup-)
@@ -13,7 +15,7 @@ This is a JS news application created with Node.js, Express & PostgreSQL. It's h
 
 # General-Information <a name="general-information"></a>
 
-The NCNEWS app is an Express server with RESTful API endpoints that retrieve information from a PSQL database. It uses Node.js and particularly node-postgres in order to GET, POST, PATCH and DELETE data from our database. The project follows the model/controller architecture, where the models are responsible for the queries to the database and the controllers do the error-handling of the information. The NCNEWS-BACKEND was created as the first project of the Northcoders Bootcamp and will be used in the future as the backend routine of my FrontEnd project. The developer used Test-Driver-Development for the entire project. All the software requirements were converted to test cases before the software was fully developed and the actual software development was tracked by repeatedly testing the software against all test cases. The testing was done using Jest and Supertest.
+The NCNEWS app is an Express server with RESTful API endpoints that retrieves information from a PSQL database. It uses Node.js and particularly node-postgres in order to GET, POST, PATCH and DELETE data from our database. The project follows the model/controller architecture, where the models are responsible for the queries to the database and the controllers do the error-handling of the information. The NCNEWS-BACKEND was created as the first project of the Northcoders Bootcamp and will be used in the future as the backend routine of my FrontEnd project. The developer used Test-Driver-Development for the entire project. All the software requirements were converted to test cases before the software was fully developed and the actual software development was tracked by repeatedly testing the software against all test cases. The testing was done using Jest and Supertest.
 
 # Technologies <a name="technologies"></a>
 
@@ -63,7 +65,7 @@ The setup-dbs drops (ie deletes) and creates our database. The second script is 
 # Link To Hosted Application on Heroku <a name="link-to-hosted-app"></a>
 
 <p align="center">
-  ****<a href="http://my-ncnews-backend.herokuapp.com/api">Hosted NCNEWS App</a>****
+  ➡️   <a href="https://my-ncnews-backend.herokuapp.com/api">Hosted NCNEWS App</a>   ⬅️
 </p>
 
 <p align="center">
