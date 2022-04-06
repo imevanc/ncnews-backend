@@ -14,11 +14,7 @@ const {
   selectArticlesByTopic,
 } = require("../models/news.models");
 
-const {
-  customErrorMsgs,
-  sortByIsValid,
-  orderIsValid,
-} = require("../db/helpers/utils");
+const { customErrorMsgs } = require("../db/helpers/utils");
 
 const endpoints = require("../endpoints.json");
 
@@ -26,6 +22,29 @@ exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
     res.status(200).send({ topics });
   });
+};
+
+sortByIsValid = (sort_by) => {
+  const filters = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    undefined,
+  ];
+  return filters.reduce((isSortByExists, column) => {
+    if (column === sort_by) {
+      isSortByExists = true;
+    }
+    return isSortByExists;
+  }, false);
+};
+
+orderIsValid = (order) => {
+  return !(order !== "ASC" && order !== "DESC" && order !== undefined);
 };
 
 getArticlesByTopic = (sort_by, order, topic, res, next) => {

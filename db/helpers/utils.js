@@ -69,26 +69,3 @@ exports.customErrorMsgs = (data, len, theKey, theValue) => {
   }
   return [undefined, undefined];
 };
-
-exports.sortByIsValid = (sort_by) => {
-  const filters = [
-    "article_id",
-    "title",
-    "topic",
-    "author",
-    "body",
-    "created_at",
-    "votes",
-    undefined,
-  ];
-  return filters.reduce((isSortByExists, column) => {
-    if (column === sort_by) {
-      isSortByExists = true;
-    }
-    return isSortByExists;
-  }, false);
-};
-
-exports.orderIsValid = (order) => {
-  return !(order !== "ASC" && order !== "DESC" && order !== undefined);
-};
