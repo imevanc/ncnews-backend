@@ -11,17 +11,16 @@ const {
   checkUsernameExists,
   removeCommentById,
   checkCommentIdExists,
+  selectArticlesByTopic,
 } = require("../models/news.models");
 
 const {
   customErrorMsgs,
   sortByIsValid,
   orderIsValid,
-  invalidQuery,
 } = require("../db/helpers/utils");
 
 const endpoints = require("../endpoints.json");
-const { sort } = require("../db/data/test-data/articles");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -29,27 +28,30 @@ exports.getTopics = (req, res) => {
   });
 };
 
-// exports.getArticles = (req, res, next) => {
-//   let { sort_by, order, topic } = req.query;
-
-//   if (!sort_by && !order && topic.length) {
-//     res.status(200).send({ articles: [] });
-//   }
-
-//   if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-//     res.status(400).send({ msg: "Bad Request" });
-//   }
-
-//   Promise.all([checkTopicExists(topic), selectArticles(sort_by, order, topic)])
-//     .then(([, articles]) => {
-//       res.status(200).send({ articles });
-//     })
-//     .catch((error) => {
-//       next(error);
-//     });
-// };
+getArticlesByTopic = (sort_by, order, topic, res, next) => {
+  if (!sort_by && !order && topic.length) {
+    return res.status(200).send({ articles: [] });
+  }
+  Promise.all([
+    checkTopicExists(topic),
+    selectArticlesByTopic(sort_by, order, topic),
+  ])
+    .then(([, articles]) => {
+      res.status(200).send({ articles });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
 
 exports.getArticles = (req, res, next) => {
+  let { sort_by, order, topic } = req.query;
+  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
+    return res.status(400).send({ msg: "Bad Request" });
+  }
+  if (topic) {
+    getArticlesByTopic(sort_by, order, topic, res, next);
+  }
   selectArticles()
     .then((articles) => {
       res.status(200).send({ articles });
@@ -77,7 +79,7 @@ exports.patchArticleById = (req, res, next) => {
   const len = Object.keys(req.body).length;
   const [msg, status] = customErrorMsgs(data, len, ["inc_votes"], ["number"]);
   if (status === 403 || status === 400) {
-    res.status(status).send({ msg });
+    return res.status(status).send({ msg });
   }
   const { inc_votes } = req.body;
   Promise.all([
@@ -104,7 +106,7 @@ exports.postCommentsByArticleId = (req, res, next) => {
     ["string", "string"]
   );
   if (status === 403 || status === 400) {
-    res.status(status).send({ msg });
+    return res.status(status).send({ msg });
   }
   const { username, body } = req.body;
   Promise.all([

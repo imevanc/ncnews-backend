@@ -67,7 +67,7 @@ describe("All Endpoints", () => {
     });
   });
   describe("/api/articles", () => {
-    describe.only("GET", () => {
+    describe("GET", () => {
       test(`This endpoint should respond with an articles 
       array of article objects, each of which should have 
       the following properties:
@@ -80,7 +80,7 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles")
+          .get("/api/articles?order=ASC")
           .expect(200)
           .then((response) => {
             expect(response.body.articles).toHaveLength(12);
@@ -113,47 +113,47 @@ describe("All Endpoints", () => {
             );
           });
       });
-      // test(`Test the value of comment_count for a specific
-      // article in the array`, () => {
-      //   return request(app)
-      //     .get("/api/articles?sort_by=title&order=DESC&topic=cats")
-      //     .expect(200)
-      //     .then((response) => {
-      //       expect(response.body.articles[0].comment_count).toBe("2");
-      //     });
-      // });
-      // test(`Test the value of just one query - sort by`, () => {
-      //   return request(app)
-      //     .get("/api/articles/?sort_by=votes&order=DESC&topic=mitch")
-      //     .expect(200)
-      //     .then(({ body }) => {
-      //       const { articles } = body;
-      //       expect(articles).toBeSortedBy("votes", {
-      //         descending: true,
-      //       });
-      //       expect(articles.length).toBeGreaterThan(0);
-      //       articles.forEach((article) => {
-      //         expect(article.topic).toBe("mitch");
-      //       });
-      //     });
-      // });
-      // test(`Valid topic query`, () => {
-      //   return request(app)
-      //     .get("/api/articles/?topic=mitch")
-      //     .expect(200)
-      //     .then(({ body }) => {
-      //       const { articles } = body;
-      //       expect(articles).toHaveLength(0);
-      //     });
-      // });
-      // test(`Non-existed queries`, () => {
-      //   return request(app)
-      //     .get("/api/articles/?sort_by=n")
-      //     .expect(400)
-      //     .then(({ body: { msg } }) => {
-      //       expect(msg).toBe("Bad Request");
-      //     });
-      // });
+      test(`Test the value of comment_count for a specific
+      article in the array`, () => {
+        return request(app)
+          .get("/api/articles?sort_by=title&order=DESC&topic=cats")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles[0].comment_count).toBe("2");
+          });
+      });
+      test(`Test the value of just one query - sort by`, () => {
+        return request(app)
+          .get("/api/articles/?sort_by=votes&topic=cats")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toBeSortedBy("votes", {
+              descending: true,
+            });
+            expect(articles.length).toBeGreaterThan(0);
+            articles.forEach((article) => {
+              expect(article.topic).toBe("cats");
+            });
+          });
+      });
+      test(`Valid topic query`, () => {
+        return request(app)
+          .get("/api/articles/?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            const { articles } = body;
+            expect(articles).toHaveLength(0);
+          });
+      });
+      test(`Existed queries with invalid values`, () => {
+        return request(app)
+          .get("/api/articles/?sort_by=n")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+      });
     });
   });
   describe("/api/articles/:article_id/comments", () => {
