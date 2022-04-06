@@ -18,7 +18,6 @@ const {
   customErrorMsgs,
   sortByIsValid,
   orderIsValid,
-  invalidQuery,
 } = require("../db/helpers/utils");
 
 const endpoints = require("../endpoints.json");
@@ -31,7 +30,7 @@ exports.getTopics = (req, res) => {
 
 getArticlesByTopic = (sort_by, order, topic, res, next) => {
   if (!sort_by && !order && topic.length) {
-    res.status(200).send({ articles: [] });
+    return res.status(200).send({ articles: [] });
   }
   Promise.all([
     checkTopicExists(topic),
@@ -48,7 +47,7 @@ getArticlesByTopic = (sort_by, order, topic, res, next) => {
 exports.getArticles = (req, res, next) => {
   let { sort_by, order, topic } = req.query;
   if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-    res.status(400).send({ msg: "Bad Request" });
+    return res.status(400).send({ msg: "Bad Request" });
   }
   if (topic) {
     getArticlesByTopic(sort_by, order, topic, res, next);
@@ -80,7 +79,7 @@ exports.patchArticleById = (req, res, next) => {
   const len = Object.keys(req.body).length;
   const [msg, status] = customErrorMsgs(data, len, ["inc_votes"], ["number"]);
   if (status === 403 || status === 400) {
-    res.status(status).send({ msg });
+    return res.status(status).send({ msg });
   }
   const { inc_votes } = req.body;
   Promise.all([
@@ -107,7 +106,7 @@ exports.postCommentsByArticleId = (req, res, next) => {
     ["string", "string"]
   );
   if (status === 403 || status === 400) {
-    res.status(status).send({ msg });
+    return res.status(status).send({ msg });
   }
   const { username, body } = req.body;
   Promise.all([
