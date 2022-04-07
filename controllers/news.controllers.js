@@ -11,7 +11,6 @@ const {
   checkUsernameExists,
   removeCommentById,
   checkCommentIdExists,
-  selectArticlesByTopic,
 } = require("../models/news.models");
 
 const { customErrorMsgs } = require("../db/helpers/utils");
@@ -24,56 +23,15 @@ exports.getTopics = (req, res) => {
   });
 };
 
-sortByIsValid = (sort_by) => {
-  const filters = [
-    "article_id",
-    "title",
-    "topic",
-    "author",
-    "body",
-    "created_at",
-    "votes",
-    undefined,
-  ];
-  return filters.reduce((isSortByExists, column) => {
-    if (column === sort_by) {
-      isSortByExists = true;
-    }
-    return isSortByExists;
-  }, false);
-};
-
-orderIsValid = (order) => {
-  return !(order !== "ASC" && order !== "DESC" && order !== undefined);
-};
-
-getArticlesByTopic = (sort_by, order, topic, res, next) => {
-  Promise.all([
-    checkTopicExists(topic),
-    selectArticlesByTopic(sort_by, order, topic),
-  ])
-    .then(([, articles]) => {
-      return res.status(200).send({ articles });
-    })
-    .catch((error) => {
-      next(error);
-    });
-};
-
 exports.getArticles = (req, res, next) => {
-  let { sort_by, order, topic } = req.query;
-  if (!sortByIsValid(sort_by) || !orderIsValid(order)) {
-    return res.status(400).send({ msg: "Bad Request" });
-  }
-  if (topic) {
-    getArticlesByTopic(sort_by, order, topic, res, next);
-  }
-  selectArticles()
+  const { sort_by, order, topic } = req.query;
+
+  selectArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
-    .catch((error) => {
-      next(error);
+    .catch((err) => {
+      next(err);
     });
 };
 

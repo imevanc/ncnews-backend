@@ -82,12 +82,11 @@ describe("All Endpoints", () => {
         return request(app)
           .get("/api/articles?topic=mitch")
           .expect(200)
-          .then((response) => {
-            expect(response.body.articles).toHaveLength(11);
-            response.body.articles.forEach((anArticle) => {
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(11);
+            articles.forEach((anArticle) => {
               expect(anArticle).toEqual(
                 expect.objectContaining({
-                  comment_count: expect.any(String),
                   article_id: expect.any(Number),
                   title: expect.any(String),
                   topic: expect.any(String),
@@ -116,10 +115,10 @@ describe("All Endpoints", () => {
       test(`Test the value of comment_count for a specific
       article in the array`, () => {
         return request(app)
-          .get("/api/articles?sort_by=title&order=DESC&topic=cats")
+          .get("/api/articles?sort_by=title&order=asc&topic=mitch")
           .expect(200)
           .then((response) => {
-            expect(response.body.articles[0].comment_count).toBe("2");
+            expect(response.body.articles).toHaveLength(11);
           });
       });
       test(`Test the value of just one query - sort by`, () => {
