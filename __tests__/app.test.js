@@ -80,10 +80,10 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles?order=ASC")
+          .get("/api/articles?topic=mitch")
           .expect(200)
           .then((response) => {
-            expect(response.body.articles).toHaveLength(12);
+            expect(response.body.articles).toHaveLength(11);
             response.body.articles.forEach((anArticle) => {
               expect(anArticle).toEqual(
                 expect.objectContaining({

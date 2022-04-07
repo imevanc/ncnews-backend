@@ -48,15 +48,12 @@ orderIsValid = (order) => {
 };
 
 getArticlesByTopic = (sort_by, order, topic, res, next) => {
-  if (!sort_by && !order && topic.length === 0) {
-    return res.status(200).send({ articles: [] });
-  }
   Promise.all([
     checkTopicExists(topic),
     selectArticlesByTopic(sort_by, order, topic),
   ])
     .then(([, articles]) => {
-      res.status(200).send({ articles });
+      return res.status(200).send({ articles });
     })
     .catch((error) => {
       next(error);
