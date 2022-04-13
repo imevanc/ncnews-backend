@@ -80,10 +80,10 @@ describe("All Endpoints", () => {
       votes
       the articles should be sorted by date in descending order.`, () => {
         return request(app)
-          .get("/api/articles?topic=mitch")
+          .get("/api/articles")
           .expect(200)
           .then(({ body: { articles } }) => {
-            expect(articles).toHaveLength(11);
+            expect(articles).toHaveLength(12);
             articles.forEach((anArticle) => {
               expect(anArticle).toEqual(
                 expect.objectContaining({
@@ -270,15 +270,17 @@ describe("All Endpoints", () => {
           .get("/api/articles/1/comments")
           .expect(200)
           .then(({ body }) => {
-            expect(convertDateToTimestamp(body.comments)).toEqual(
-              expect.objectContaining({
-                comment_id: expect.any(Number),
-                author: expect.any(String),
-                body: expect.any(String),
-                created_at: expect.any(Number),
-                votes: expect.any(Number),
-              })
-            );
+            body.comments.forEach((comment) => {
+              expect(convertDateToTimestamp(comment)).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  author: expect.any(String),
+                  body: expect.any(String),
+                  created_at: expect.any(Number),
+                  votes: expect.any(Number),
+                })
+              );
+            });
           });
       });
       test("invalid article id", () => {

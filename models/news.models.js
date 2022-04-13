@@ -108,7 +108,7 @@ exports.selectCommentsByArticleId = (article_id) => {
       if (rows.length === 0) {
         return [];
       }
-      return rows[0];
+      return rows;
     });
 };
 
